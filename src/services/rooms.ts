@@ -308,7 +308,10 @@ export function isRoomServiceError(error: unknown, code: string) {
 export async function copyRoomInviteLink(inviteCode: string) {
   let link: string;
   try {
-    link = await Share.createLink({ path: `intoss://movie-tago/invite?code=${encodeURIComponent(inviteCode)}` });
+    link = await Share.createLink({
+      path: `intoss://movie-tago/invite?code=${encodeURIComponent(inviteCode)}`,
+      ogImageUrl: "https://raw.githubusercontent.com/chaerxn/watch-tonight/main/public/og-watch-tonight-kakao.png",
+    });
   } catch {
     const url = new URL(window.location.href);
     url.search = "";
