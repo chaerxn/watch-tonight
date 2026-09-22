@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { Environment } from "@apps-in-toss/web-framework";
 import "./App.css";
 import ladderLosingDotIcon from "./assets/ladder-losing-dot.svg";
 import ladderWinningPopcornIcon from "./assets/ladder-winning-popcorn.svg";
@@ -77,6 +78,7 @@ import {
 } from "./services/ladders";
 import { searchTitles, type SearchTitle } from "./services/tmdb";
 import { supabase } from "./lib/supabase";
+import { getInitialInviteCode } from "./lib/invite-url";
 
 type Screen = "home" | "information-source" | "create-room" | "candidate-room" | "room-info" | "participation-ended" | "room-ended" | "title-search" | "manual-entry" | "invite" | "evaluation" | "revote-setup" | "revote" | "ladder" | "final-result" | "decision-history";
 
@@ -3384,8 +3386,13 @@ function MainApp() {
   }, []);
 
   useEffect(() => {
-    const inviteCode = new URLSearchParams(window.location.search).get("invite")
-      ?? new URLSearchParams(window.location.search).get("code");
+    let schemeUrl: string | undefined;
+    try {
+      schemeUrl = Environment.initialURL;
+    } catch {
+      // The SDK entry URL is unavailable in a regular browser.
+    }
+    const inviteCode = getInitialInviteCode(window.location.href, schemeUrl);
     if (inviteCode) {
       currentScreen.current = "invite";
       setScreen("invite");
